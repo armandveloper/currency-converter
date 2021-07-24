@@ -39,11 +39,25 @@ const useStyles = makeStyles({
 	},
 });
 
+const initCurrenciesState = (
+	currencies: ICurrency[],
+	from: string,
+	to: string
+): ICurrencyPair => {
+	return {
+		from:
+			currencies.find((currency: ICurrency) => currency.iso === from) ||
+			({} as ICurrency),
+		to:
+			currencies.find((currency: ICurrency) => currency.iso === to) ||
+			({} as ICurrency),
+	};
+};
+
 function FormConverter({ currencies }: FormConverterProps) {
-	const [currencyPair, setCurrencyPair] = React.useState<ICurrencyPair>({
-		from: currencies[149],
-		to: currencies[115],
-	});
+	const [currencyPair, setCurrencyPair] = React.useState<ICurrencyPair>(
+		initCurrenciesState(currencies, 'USD', 'MXN')
+	);
 
 	const swapCurrencies = () =>
 		setCurrencyPair({
