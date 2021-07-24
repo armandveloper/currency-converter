@@ -75,11 +75,36 @@ function FormConverter({ currencies }: FormConverterProps) {
 		});
 	};
 
+	const [amount, setAmount] = React.useState(1);
+
+	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setAmount(+e.target.value);
+	};
+
+	const [error, setError] = React.useState('');
+
+	const handleConvert = (e: React.SyntheticEvent) => {
+		e.preventDefault();
+		if (amount < 1) {
+			setError('The minimum amount value is 1');
+			return;
+		}
+		setError('');
+	};
+
 	const classes = useStyles();
 	return (
-		<form>
+		<form onSubmit={handleConvert} noValidate={true} autoComplete="off">
 			<FormControl className={classes.formControl} fullWidth={true}>
-				<TextField label="Amount" id="amount" type="number" />
+				<TextField
+					error={!!error}
+					helperText={error}
+					id="amount"
+					label="Amount"
+					onChange={handleAmountChange}
+					type="number"
+					value={amount + ''}
+				/>
 			</FormControl>
 			<FormControl className={classes.formControl} fullWidth={true}>
 				<InputLabel id="from-currency-label">From</InputLabel>
@@ -145,7 +170,12 @@ function FormConverter({ currencies }: FormConverterProps) {
 					))}
 				</Select>
 			</FormControl>
-			<Button variant="contained" color="primary" fullWidth={true}>
+			<Button
+				type="submit"
+				variant="contained"
+				color="primary"
+				fullWidth={true}
+			>
 				Convert
 			</Button>
 		</form>
