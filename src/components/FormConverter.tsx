@@ -9,6 +9,7 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import CachedIcon from '@material-ui/icons/Cached';
 import { ICurrency } from './Converter';
+import { formatNumber } from '../utils/digits';
 
 interface FormConverterProps {
 	currencies: any[];
@@ -127,9 +128,9 @@ function FormConverter({ currencies }: FormConverterProps) {
 			const data = await res.json();
 			console.log(data);
 			setRateResult({
-				amount: data.amount + '',
+				amount: formatNumber(data.amount),
 				from: currencyPair.from.currency_name,
-				result: data.to[0].mid + '',
+				result: formatNumber(data.to[0].mid),
 				to: currencyPair.to.currency_name,
 			});
 		} catch (err) {
