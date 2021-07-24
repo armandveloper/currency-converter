@@ -19,6 +19,13 @@ interface ICurrencyPair {
 	to: ICurrency;
 }
 
+interface IRateResult {
+	amount: string;
+	from: string;
+	result: string;
+	to: string;
+}
+
 const useStyles = makeStyles({
 	formControl: {
 		marginBottom: '2em',
@@ -89,13 +96,48 @@ function FormConverter({ currencies }: FormConverterProps) {
 		});
 	};
 
+	const API_USERNAME = process.env.REACT_APP_API_ID;
+	const API_PASSWORD = process.env.REACT_APP_API_KEY;
+
 	const [amount, setAmount] = React.useState(1);
 
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setAmount(+e.target.value);
 	};
 
+	const [rateResult, setRateResult] = React.useState<IRateResult>(null!);
+	const [isLoading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState('');
+
+	const convert = async () => {
+		setLoading(true);
+		try {
+			const res = await window.fetch(
+				`https://xecdapi.xe.com/v1/convert_from.json/?from=${currencyPair.from.iso}&to=${currencyPair.to.iso}&amount=${amount}&decimal_places=2`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: `Basic ${window.btoa(
+							`${API_USERNAME}:${API_PASSWORD}`
+						)}`,
+					},
+				}
+			);
+			console.log(res);
+			const data = await res.json();
+			console.log(data);
+			setRateResult({
+				amount: data.amount + '',
+				from: currencyPair.from.currency_name,
+				result: data.to[0].mid + '',
+				to: currencyPair.to.currency_name,
+			});
+		} catch (err) {
+			console.log(err);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleConvert = (e: React.SyntheticEvent) => {
 		e.preventDefault();
@@ -104,6 +146,7 @@ function FormConverter({ currencies }: FormConverterProps) {
 			return;
 		}
 		setError('');
+		convert();
 	};
 
 	const classes = useStyles();
@@ -185,12 +228,13 @@ function FormConverter({ currencies }: FormConverterProps) {
 				</Select>
 			</FormControl>
 			<Button
+				color="primary"
+				disabled={isLoading}
+				fullWidth={true}
 				type="submit"
 				variant="contained"
-				color="primary"
-				fullWidth={true}
 			>
-				Convert
+				{isLoading ? 'Converting...' : 'Convert'}
 			</Button>
 		</form>
 	);

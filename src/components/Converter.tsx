@@ -13,13 +13,6 @@ export interface ICurrency {
 	flag: string;
 }
 
-interface Output {
-	amount: string;
-	from: string;
-	result: string;
-	to: string;
-}
-
 const useStyles = makeStyles({
 	converter: (props: ConverterProps) => ({
 		backgroundColor: props.background,
