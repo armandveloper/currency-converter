@@ -2,6 +2,7 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
+import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -29,10 +30,12 @@ const useStyles = makeStyles({
 	optionFlag: {
 		marginRight: '1em',
 	},
-	convertIcon: {
+	swapBtn: {
 		display: 'block',
-		fontSize: '5em',
 		margin: '1rem auto',
+	},
+	swapIcon: {
+		fontSize: '4.2em',
 	},
 });
 
@@ -42,10 +45,29 @@ function FormConverter({ currencies }: FormConverterProps) {
 		to: currencies[115],
 	});
 
+	const swapCurrencies = () =>
+		setCurrencyPair({
+			from: {
+				...currencyPair.to,
+			},
+			to: {
+				...currencyPair.from,
+			},
+		});
+
 	const updatePair = (iso: string, type: 'from' | 'to') => {
 		const currency: ICurrency = currencies.find(
 			(currency: ICurrency) => currency.iso === iso
 		);
+
+		// Si elige la misma moneda del select opuesto se hace un intercambio
+		if (
+			(type === 'from' && currency.iso === currencyPair.to.iso) ||
+			(type === 'to' && currency.iso === currencyPair.from.iso)
+		) {
+			swapCurrencies();
+			return;
+		}
 
 		setCurrencyPair({
 			...currencyPair,
@@ -88,7 +110,14 @@ function FormConverter({ currencies }: FormConverterProps) {
 					))}
 				</Select>
 			</FormControl>
-			<CachedIcon className={classes.convertIcon} color="primary" />
+			<IconButton
+				className={classes.swapBtn}
+				color="secondary"
+				aria-label="Swap currencies"
+				onClick={swapCurrencies}
+			>
+				<CachedIcon className={classes.swapIcon} />
+			</IconButton>
 			<FormControl className={classes.formControl} fullWidth={true}>
 				<InputLabel id="to-currency-label">To</InputLabel>
 				<Select
