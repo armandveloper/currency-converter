@@ -15,9 +15,10 @@ import {
 } from '../interfaces/currency.interface';
 import { formatNumber } from '../utils/digits';
 import RateResult from './RateResult';
+import api from '../api';
 
 interface FormConverterProps {
-	currencies: any[];
+	currencies: ICurrency[];
 }
 
 const useStyles = makeStyles({
@@ -71,9 +72,9 @@ function FormConverter({ currencies }: FormConverterProps) {
 		});
 
 	const updatePair = (iso: string, type: 'from' | 'to') => {
-		const currency: ICurrency = currencies.find(
-			(currency: ICurrency) => currency.iso === iso
-		);
+		const currency: ICurrency =
+			currencies.find((currency: ICurrency) => currency.iso === iso) ||
+			({} as ICurrency);
 
 		// Si elige la misma moneda del select opuesto se hace un intercambio
 		if (
@@ -90,9 +91,6 @@ function FormConverter({ currencies }: FormConverterProps) {
 		});
 	};
 
-	const API_USERNAME = process.env.REACT_APP_API_ID;
-	const API_PASSWORD = process.env.REACT_APP_API_KEY;
-
 	const [amount, setAmount] = React.useState(1);
 
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,20 +104,10 @@ function FormConverter({ currencies }: FormConverterProps) {
 	const convert = async () => {
 		setLoading(true);
 		try {
-			const res = await window.fetch(
-				`https://xecdapi.xe.com/v1/convert_from.json/?from=${currencyPair.from.iso}&to=${currencyPair.to.iso}&amount=${amount}&decimal_places=2`,
-				{
-					method: 'GET',
-					headers: {
-						Authorization: `Basic ${window.btoa(
-							`${API_USERNAME}:${API_PASSWORD}`
-						)}`,
-					},
-				}
+			const res = await api.currencies.get(
+				`https://xecdapi.xe.com/v1/convert_from.json/?from=${currencyPair.from.iso}&to=${currencyPair.to.iso}&amount=${amount}&decimal_places=2`
 			);
-			console.log(res);
 			const data = await res.json();
-			console.log(data);
 			setRateResult({
 				amount: formatNumber(data.amount),
 				from: currencyPair.from.currency_name,
