@@ -4,7 +4,7 @@ import { IRateResult } from '../interfaces/currency.interface';
 
 const useStyles = makeStyles({
 	wrapper: {
-		margin: '1rem auto',
+		margin: '1.5rem auto',
 	},
 	text: {
 		fontWeight: 400,

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { ICurrency } from '../interfaces/currency.interface';
 import FormConverter from './FormConverter';
 import api from '../api';
@@ -18,6 +19,9 @@ const useStyles = makeStyles({
 		backgroundColor: props.background,
 		padding: '1em',
 	}),
+	loader: {
+		textAlign: 'center',
+	},
 });
 
 function Converter() {
@@ -87,12 +91,16 @@ function Converter() {
 		init();
 	}, []);
 
-	return isLoading ? (
-		<h1>Loadinfg....</h1>
-	) : (
+	return (
 		<main className={classes.wrapper}>
 			<div className={classes.converter}>
-				<FormConverter currencies={formattedCurrencies} />
+				{isLoading ? (
+					<div className={classes.loader}>
+						<CircularProgress color="secondary" />
+					</div>
+				) : (
+					<FormConverter currencies={formattedCurrencies} />
+				)}
 			</div>
 		</main>
 	);

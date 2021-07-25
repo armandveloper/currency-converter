@@ -104,10 +104,9 @@ function FormConverter({ currencies }: FormConverterProps) {
 	const convert = async () => {
 		setLoading(true);
 		try {
-			const res = await api.currencies.get(
+			const data = await api.currencies.get(
 				`https://xecdapi.xe.com/v1/convert_from.json/?from=${currencyPair.from.iso}&to=${currencyPair.to.iso}&amount=${amount}&decimal_places=2`
 			);
-			const data = await res.json();
 			setRateResult({
 				amount: formatNumber(data.amount),
 				from: currencyPair.from.currency_name,
