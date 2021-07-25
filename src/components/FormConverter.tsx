@@ -8,23 +8,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import CachedIcon from '@material-ui/icons/Cached';
-import { ICurrency } from './Converter';
+import {
+	ICurrency,
+	ICurrencyPair,
+	IRateResult,
+} from '../interfaces/currency.interface';
 import { formatNumber } from '../utils/digits';
+import RateResult from './RateResult';
 
 interface FormConverterProps {
 	currencies: any[];
-}
-
-interface ICurrencyPair {
-	from: ICurrency;
-	to: ICurrency;
-}
-
-interface IRateResult {
-	amount: string;
-	from: string;
-	result: string;
-	to: string;
 }
 
 const useStyles = makeStyles({
@@ -228,6 +221,9 @@ function FormConverter({ currencies }: FormConverterProps) {
 					))}
 				</Select>
 			</FormControl>
+
+			<RateResult {...rateResult} />
+
 			<Button
 				color="primary"
 				disabled={isLoading}

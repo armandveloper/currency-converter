@@ -53,7 +53,6 @@ function App() {
 					className={classes.title}
 					variant="h4"
 					component="h1"
-					gutterBottom={true}
 				>
 					Currency Converter
 				</Typography>

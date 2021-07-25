@@ -1,23 +1,20 @@
 import * as React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { ICurrency } from '../interfaces/currency.interface';
 import FormConverter from './FormConverter';
 
 interface ConverterProps {
 	background: string;
 }
 
-export interface ICurrency {
-	currency_name: string;
-	is_obsolete: boolean;
-	iso: string;
-	flag: string;
-}
-
 const useStyles = makeStyles({
+	wrapper: {
+		maxWidth: '460px',
+		margin: '2em auto 0',
+		padding: '1em',
+	},
 	converter: (props: ConverterProps) => ({
 		backgroundColor: props.background,
-		maxWidth: '460px',
-		margin: '0 auto',
 		padding: '1em',
 	}),
 });
@@ -62,25 +59,31 @@ function Converter() {
 				console.log(currencies);
 				console.log(countries);
 
-				const currenciesWithFlags: any = currencies.map(
+				const currenciesWithFlags: ICurrency[] = currencies.map(
 					(currency: ICurrency) => {
 						const flagFound: any = countries.find(
 							(country: any) =>
 								country.currencies[0].code === currency.iso
 						);
-
-						if (currency.currency_name === 'US Dollar')
-							return {
+						let formattedCurrency = null;
+						if (currency.currency_name === 'US Dollar') {
+							formattedCurrency = {
 								...currency,
 								flag: 'https://restcountries.eu/data/usa.svg',
 							};
-						else if (!flagFound)
-							return {
+						} else if (!flagFound) {
+							formattedCurrency = {
 								...currency,
 								flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blue_question_mark_icon.svg/1200px-Blue_question_mark_icon.svg.png',
 							};
-						else if (flagFound)
-							return { ...currency, flag: flagFound.flag };
+						} else if (flagFound) {
+							formattedCurrency = {
+								...currency,
+								flag: flagFound.flag,
+							};
+						}
+
+						return formattedCurrency;
 					}
 				);
 				return currenciesWithFlags;
@@ -103,8 +106,10 @@ function Converter() {
 	return isLoading ? (
 		<h1>Loadinfg....</h1>
 	) : (
-		<main className={classes.converter}>
-			<FormConverter currencies={formattedCurrencies} />
+		<main className={classes.wrapper}>
+			<div className={classes.converter}>
+				<FormConverter currencies={formattedCurrencies} />
+			</div>
 		</main>
 	);
 }
